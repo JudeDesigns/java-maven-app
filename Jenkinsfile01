@@ -1,0 +1,41 @@
+//here's a list of things to be done in this jenkins file.
+/*
+1. We want to add the github branch and some credentials and build the source code.
+2. We want to build a docker image of the code.
+3. push the docker image to a private repository.
+
+*/
+pipeline {
+    agent any
+    tools{
+        maven 'Maven'
+    }
+    stages{
+        stage("build jar"){
+            steps{
+                script{
+                    sh 'mvn package'
+                    echo "building the application...."
+                }
+            }
+        }
+        stage("build image"){
+            steps{
+                script{
+                    echo 'building the docker image....'
+                     withCredentials([usernamePassword(credentialsId: 'dockerhub-repo',passwordVariable: Pass, usernameVariable: User )])
+                     sh 'docker build -t jude1568/my-repo:1.0 .'
+                     sh "echo ${PASS} | docker login -u ${USER} --password-stdin"
+                     sh 'docker push jude1568/my-repo:1.0'
+                }
+            }
+        }
+        stage("deploy "){
+            steps{
+                script {
+                    echo "deloying the application....."
+                }
+            }
+        }
+    }
+}
