@@ -25,7 +25,7 @@ pipeline {
                     echo 'building the docker image....'
                     withCredentials([usernamePassword(credentialsId: 'dockerhub-repo', passwordVariable: 'PASS', usernameVariable: 'USER' )]) { 
                       sh 'docker build -t jude1568/my-repo:1.0 .'
-                      sh ' docker login -u $USER -p $PASS'
+                      sh ' echo "$PASS" |docker login -u $USER --password-stdin'
                       sh 'docker push jude1568/my-repo:1.0'
                      }
                 }
